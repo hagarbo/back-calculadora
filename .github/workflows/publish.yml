@@ -1,11 +1,12 @@
-name: Python package
+name: Publish Workflow
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build:
+
+  tests:
     runs-on: ubuntu-latest
 
    steps:
@@ -29,3 +30,12 @@ jobs:
         - name: Check code formatting with Ruff
           run: ruff format --diff --target-version=py39
           continue-on-error: true
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag adrianomanzano/back-calculadora:v1
