@@ -40,20 +40,21 @@ jobs:
       - name: Push
         run: docker push ${{ secrets.DOCKER_USER }}/back-calculadora:latest
 
-  build-and-push-github-package:
+  push_to_github_container_registry:
     runs-on: ubuntu-latest
-    needs: docker-image
     steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-      - name: Login en GitHub Container Registry
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.hagarbo }}
-          password: ${{ secrets.GIT_ACTIONS_TOKEN }}
-      - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.hagarbo }}/back-calculadora:latest .
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push Docker image to GitHub Container Registry
-        run: docker push ghcr.io/${{ github.hagarbo }}/back-calculadora:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ghcr.io/${{ github.repository }}/back-calculadora:latest
