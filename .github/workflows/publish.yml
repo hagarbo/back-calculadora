@@ -40,8 +40,9 @@ jobs:
       - name: Push
         run: docker push ${{ secrets.DOCKER_USER }}/back-calculadora:latest
 
-  push_to_github_container_registry:
+  image-to-github:
     runs-on: ubuntu-latest
+    needs: docker-image
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
